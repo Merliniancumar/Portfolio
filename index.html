@@ -1,23 +1,316 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>My Portfolio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merlín Ian Cumar Vinci — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-deep: #0d2b47;
+    --blue-mid: #143a5c;
+    --grid: rgba(232,241,248,0.07);
+    --grid-strong: rgba(232,241,248,0.14);
+    --paper: #e8f1f8;
+    --paper-dim: #7fa3bd;
+    --orange: #ff8c42;
+    --cyan: #6fc3e0;
+    --font-display: 'Archivo', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-body: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background:
+      repeating-linear-gradient(0deg, var(--grid) 0px, var(--grid) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, var(--grid) 0px, var(--grid) 1px, transparent 1px, transparent 40px),
+      var(--blue-deep);
+    color: var(--paper);
+    font-family: var(--font-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--cyan); }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--orange); outline-offset: 3px; }
+  ::selection{ background: var(--orange); color: var(--blue-deep); }
+
+  .sheet{ max-width: 880px; margin: 0 auto; padding: 0 28px; position: relative; }
+
+  /* corner crop marks reused across sections */
+  .crop{
+    position:absolute; width:16px; height:16px; border-color: var(--paper-dim);
+    opacity:0.6;
+  }
+  .crop.tl{ top:0; left:0; border-top:1px solid; border-left:1px solid; }
+  .crop.tr{ top:0; right:0; border-top:1px solid; border-right:1px solid; }
+  .crop.bl{ bottom:0; left:0; border-bottom:1px solid; border-left:1px solid; }
+  .crop.br{ bottom:0; right:0; border-bottom:1px solid; border-right:1px solid; }
+
+  /* ---- top bar: like a drawing header strip ---- */
+  header.strip{
+    border-bottom: 1px solid var(--grid-strong);
+    padding: 16px 0;
+  }
+  header.strip .sheet{ display:flex; justify-content:space-between; align-items:center; }
+  .doc-id{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--paper-dim); letter-spacing: 0.05em; }
+  .doc-id b{ color: var(--paper); }
+
+  /* ---- hero ---- */
+  .hero{ padding: 90px 0 70px; position: relative; }
+  .hero .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1{
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 span{ color: var(--paper-dim); }
+
+  .dim-line{
+    display:flex; align-items:center; gap:10px;
+    margin-top: 28px;
+    color: var(--paper-dim);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+  .dim-line .tick{ flex:1; height:1px; background: var(--paper-dim); position:relative; }
+  .dim-line .tick::before, .dim-line .tick::after{
+    content:""; position:absolute; top:-4px; width:1px; height:9px; background: var(--paper-dim);
+  }
+  .dim-line .tick::before{ left:0; }
+  .dim-line .tick::after{ right:0; }
+
+  p.lead{ margin-top: 26px; max-width: 56ch; font-size: 1.02rem; color: var(--paper); }
+
+  /* ---- sections ---- */
+  section{ padding: 64px 0; border-top: 1px solid var(--grid-strong); position: relative; }
+
+  .sec-label{
+    display:flex; align-items:center; gap: 12px; margin-bottom: 34px;
+  }
+  .sec-label .tag{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--blue-deep);
+    background: var(--orange);
+    padding: 3px 9px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .sec-label h2{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- exploded stack diagram ---- */
+  .stack-diagram{
+    display:flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .layer{
+    display:grid;
+    grid-template-columns: 120px 1fr;
+    align-items:center;
+    gap: 18px;
+    border: 1px solid var(--grid-strong);
+    background: rgba(232,241,248,0.03);
+    padding: 16px 20px;
+    position: relative;
+  }
+  .layer::before{
+    content:"";
+    position:absolute; left:-1px; top:0; bottom:0; width:3px; background: var(--layer-color, var(--cyan));
+  }
+  .layer .tier{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--paper-dim); }
+  .layer .tier b{ display:block; font-size: 0.95rem; color: var(--paper); font-family: var(--font-display); text-transform: uppercase; margin-top: 2px; }
+  .layer .items{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .layer .items span{
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--paper);
+    border: 1px solid var(--grid-strong); padding: 4px 10px; border-radius: 2px;
+  }
+  .layer.l1{ --layer-color: var(--orange); }
+  .layer.l2{ --layer-color: var(--cyan); }
+  .layer.l3{ --layer-color: #8fd18f; }
+  .layer.l4{ --layer-color: #d6a8f0; }
+
+  .interest-row{ display:flex; flex-wrap:wrap; gap: 10px; }
+  .interest-row span{
+    font-family: var(--font-mono); font-size: 0.8rem;
+    border: 1px solid var(--grid-strong); padding: 6px 12px; border-radius: 2px; color: var(--paper-dim);
+  }
+
+  /* ---- about ---- */
+  .about-grid{ display:grid; grid-template-columns: 1fr; gap: 26px; }
+  .about-grid p{ max-width: 62ch; font-size: 0.97rem; }
+  .spec-table{ font-family: var(--font-mono); font-size: 0.82rem; margin-top: 20px; }
+  .spec-table .row{ display:flex; padding: 8px 0; border-bottom: 1px solid var(--grid-strong); }
+  .spec-table .k{ width: 160px; color: var(--paper-dim); flex-shrink:0; }
+  .spec-table .v{ color: var(--paper); }
+
+  /* ---- projects as spec cards ---- */
+  .spec-card{
+    border: 1px solid var(--grid-strong);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    background: rgba(232,241,248,0.02);
+  }
+  .spec-card .top-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px; }
+  .spec-card h3{ font-family: var(--font-display); font-size: 1.05rem; text-transform: uppercase; }
+  .spec-card .rev{ font-family: var(--font-mono); font-size: 0.7rem; color: var(--paper-dim); border: 1px solid var(--grid-strong); padding: 2px 8px; }
+  .spec-card p{ color: var(--paper-dim); font-size: 0.88rem; }
+  .spec-card .items{ margin-top: 12px; display:flex; gap: 8px; flex-wrap:wrap; }
+  .spec-card .items span{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--paper); border: 1px solid var(--grid-strong); padding: 3px 9px; }
+
+  .note{
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-dim);
+    border: 1px dashed var(--grid-strong); padding: 14px 18px;
+  }
+
+  /* ---- contact ---- */
+  .contact-block{ display:flex; flex-direction: column; gap: 12px; }
+  .contact-block .row{ display:flex; gap: 16px; font-family: var(--font-mono); font-size: 0.92rem; align-items:baseline; }
+  .contact-block .k{ width: 90px; color: var(--paper-dim); flex-shrink:0; text-transform: uppercase; font-size: 0.72rem; }
+  .contact-block a{ color: var(--paper); border-bottom: 1px solid var(--grid-strong); }
+  .contact-block a:hover{ border-bottom-color: var(--orange); color: var(--orange); }
+
+  footer{ padding: 26px 0 60px; }
+  footer .sheet{ display:flex; justify-content:space-between; font-family: var(--font-mono); font-size: 0.7rem; color: var(--paper-dim); }
+
+  @media (max-width: 620px){
+    .layer{ grid-template-columns: 1fr; }
+    .spec-table .row{ flex-direction: column; gap: 2px; }
+    .spec-table .k{ width:auto; }
+    footer .sheet{ flex-direction: column; gap: 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
-  <h1>¡Hi there! I'm Ian</h1>
-  <p>I'm a Full Stack Development student passionate about software development and web technologies.</p>
 
-  <h2>Technologies and interests</h2>
-  <ul>
-    <li>HTML</li>
-    <li>Python</li>
-    <li>JavaScript</li>
-    <li>Git y GitHub</li>
-  </ul>
+<header class="strip">
+  <div class="sheet">
+    <div class="doc-id">DOC <b>PORTFOLIO-01</b> / REV <b>A</b></div>
+    <div class="doc-id">CAPILLA DEL MONTE, CBA — AR</div>
+  </div>
+</header>
 
-  <h2>Contact</h2>
-  <p><a href="https://github.com/TU-USUARIO">GitHub</a></p>
-  <p><a href="https://www.linkedin.com/in/merl%C3%ADn-ian-cumar-vinci-883287391/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BViWSCOPuTGyEgIRm69F3sg%3D%3D">LinkedIn</a></p>
+<div class="sheet hero">
+  <div class="crop tl"></div><div class="crop tr"></div>
+  <div class="eyebrow">Ficha técnica — Perfil profesional</div>
+  <h1>Merlín Ian<br><span>Cumar Vinci</span></h1>
+  <div class="dim-line"><span>FULL STACK DEV</span><span class="tick"></span><span>EN FORMACIÓN</span></div>
+  <p class="lead">
+    Estudiante de la Tecnicatura Universitaria de Pregrado en Programación Full Stack,
+    sede regional Bernardo Houssay, Capilla del Monte, Córdoba. Construyo aplicaciones
+    web de punta a punta: interfaz, lógica y datos, como capas de una misma estructura.
+  </p>
+</div>
+
+<section id="stack">
+  <div class="sheet">
+    <div class="sec-label"><span class="tag">01</span><h2>Stack — vista explotada</h2></div>
+
+    <div class="stack-diagram">
+      <div class="layer l1">
+        <div class="tier">CAPA 01<b>Frontend</b></div>
+        <div class="items"><span>HTML5</span><span>CSS3</span><span>JavaScript</span></div>
+      </div>
+      <div class="layer l2">
+        <div class="tier">CAPA 02<b>Backend</b></div>
+        <div class="items"><span>Python</span></div>
+      </div>
+      <div class="layer l3">
+        <div class="tier">CAPA 03<b>Datos</b></div>
+        <div class="items"><span>SQL</span><span>PostgreSQL</span></div>
+      </div>
+      <div class="layer l4">
+        <div class="tier">CAPA 04<b>Herramientas</b></div>
+        <div class="items"><span>VS Code</span><span>Git</span><span>GitHub</span><span>GitHub Pages</span><span>PSeInt</span></div>
+      </div>
+    </div>
+
+    <div class="interest-row">
+      <span>Full Stack</span><span>Frontend</span><span>Backend</span><span>Bases de datos</span><span>Diseño UI</span><span>Apps web</span>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="sheet">
+    <div class="sec-label"><span class="tag">02</span><h2>Memoria descriptiva</h2></div>
+    <div class="about-grid">
+      <p>
+        Curso la Tecnicatura Universitaria de Pregrado en Programación Full Stack.
+        Mi foco está en entender cómo se conectan las distintas capas de una aplicación
+        web: desde lo que ve y toca el usuario, pasando por la lógica que procesa esa
+        información, hasta la base de datos que la persiste.
+      </p>
+      <div class="spec-table">
+        <div class="row"><div class="k">Carrera</div><div class="v">Tecnicatura Univ. de Pregrado — Programación Full Stack</div></div>
+        <div class="row"><div class="k">Sede</div><div class="v">Bernardo Houssay, Capilla del Monte (Córdoba, AR)</div></div>
+        <div class="row"><div class="k">Estado</div><div class="v">En cursado</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="sheet">
+    <div class="sec-label"><span class="tag">03</span><h2>Proyectos</h2></div>
+
+    <div class="spec-card">
+      <div class="top-row">
+        <h3>Nombre del proyecto</h3>
+        <span class="rev">POR CARGAR</span>
+      </div>
+      <p>Reemplazá esta ficha por un trabajo práctico o proyecto real: qué problema resuelve, tu rol, y el link al repositorio en GitHub.</p>
+      <div class="items"><span>tecnología</span><span>tecnología</span></div>
+    </div>
+
+    <div class="note">+ Sumá una ficha por cada proyecto o trabajo práctico que quieras mostrar.</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sheet">
+    <div class="sec-label"><span class="tag">04</span><h2>Contacto</h2></div>
+    <div class="contact-block">
+      <div class="row"><span class="k">Email</span><a href="mailto:cumarvincimerlinian@gmail.com">cumarvincimerlinian@gmail.com</a></div>
+      <div class="row"><span class="k">LinkedIn</span><a href="https://www.linkedin.com/in/merl%C3%ADn-ian-cumar-vinci-883287391/" target="_blank" rel="noopener">/in/merlín-ian-cumar-vinci-883287391</a></div>
+      <div class="row"><span class="k">GitHub</span><a href="https://github.com/Merliniancumar" target="_blank" rel="noopener">github.com/Merliniancumar</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="sheet">
+    <div class="crop bl"></div><div class="crop br"></div>
+    <span>MERLÍN IAN CUMAR VINCI — PORTFOLIO</span>
+    <span>SHEET 01/01</span>
+  </div>
+</footer>
+
 </body>
 </html>
